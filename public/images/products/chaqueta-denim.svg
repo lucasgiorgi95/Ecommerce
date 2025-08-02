@@ -1,0 +1,34 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del producto -->
+  <rect width="800" height="800" fill="#e3f2fd" />
+  
+  <!-- Silueta de la chaqueta -->
+  <path d="M250 150 L200 250 L150 350 L150 650 L350 650 L400 600 L450 650 L650 650 L650 350 L600 250 L550 150 Z" fill="#90caf9" stroke="#64b5f6" stroke-width="10" />
+  
+  <!-- Cuello de la chaqueta -->
+  <path d="M300 150 L400 250 L500 150" fill="#64b5f6" stroke="#42a5f5" stroke-width="8" />
+  
+  <!-- Bolsillos -->
+  <rect x="200" y="400" width="100" height="80" rx="10" fill="#64b5f6" stroke="#42a5f5" stroke-width="5" />
+  <rect x="500" y="400" width="100" height="80" rx="10" fill="#64b5f6" stroke="#42a5f5" stroke-width="5" />
+  
+  <!-- Botones -->
+  <circle cx="400" cy="300" r="10" fill="#1e88e5" />
+  <circle cx="400" cy="350" r="10" fill="#1e88e5" />
+  <circle cx="400" cy="400" r="10" fill="#1e88e5" />
+  <circle cx="400" cy="450" r="10" fill="#1e88e5" />
+  <circle cx="400" cy="500" r="10" fill="#1e88e5" />
+  
+  <!-- Costuras -->
+  <line x1="250" y1="150" x2="150" y2="350" stroke="#42a5f5" stroke-width="3" />
+  <line x1="550" y1="150" x2="650" y2="350" stroke="#42a5f5" stroke-width="3" />
+  <line x1="200" y1="450" x2="300" y2="450" stroke="#42a5f5" stroke-width="3" />
+  <line x1="500" y1="450" x2="600" y2="450" stroke="#42a5f5" stroke-width="3" />
+  
+  <!-- Textura denim -->
+  <pattern id="denim" patternUnits="userSpaceOnUse" width="20" height="20" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="20" stroke="#42a5f5" stroke-width="1" />
+    <line x1="10" y1="0" x2="10" y2="20" stroke="#42a5f5" stroke-width="1" />
+  </pattern>
+  <rect x="150" y="150" width="500" height="500" fill="url(#denim)" fill-opacity="0.3" />
+</svg>

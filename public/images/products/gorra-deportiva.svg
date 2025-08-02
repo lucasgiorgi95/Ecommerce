@@ -1,0 +1,38 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del producto -->
+  <rect width="800" height="800" fill="#f5f5f5" />
+  
+  <!-- Silueta de la gorra -->
+  <path d="M200 400 C 200 300, 300 200, 400 200 C 500 200, 600 300, 600 400 L 650 400 C 650 450, 600 500, 550 500 L 250 500 C 200 500, 150 450, 150 400 Z" fill="#2196f3" stroke="#1976d2" stroke-width="10" />
+  
+  <!-- Visera de la gorra -->
+  <path d="M200 400 L 150 400 C 150 450, 200 500, 250 500 L 550 500 C 600 500, 650 450, 650 400 L 600 400 C 600 430, 550 460, 500 460 L 300 460 C 250 460, 200 430, 200 400 Z" fill="#1565c0" stroke="#0d47a1" stroke-width="5" />
+  
+  <!-- Parte superior de la gorra -->
+  <path d="M400 200 C 300 200, 200 300, 200 400 C 200 430, 250 460, 300 460 L 500 460 C 550 460, 600 430, 600 400 C 600 300, 500 200, 400 200 Z" fill="#2196f3" />
+  
+  <!-- Costuras de la gorra -->
+  <path d="M400 200 L 400 400" stroke="#1976d2" stroke-width="3" />
+  <path d="M300 230 C 300 330, 350 400, 400 400" stroke="#1976d2" stroke-width="3" />
+  <path d="M500 230 C 500 330, 450 400, 400 400" stroke="#1976d2" stroke-width="3" />
+  <path d="M250 280 C 250 350, 320 400, 400 400" stroke="#1976d2" stroke-width="3" />
+  <path d="M550 280 C 550 350, 480 400, 400 400" stroke="#1976d2" stroke-width="3" />
+  
+  <!-- Botón superior -->
+  <circle cx="400" cy="200" r="10" fill="#1976d2" />
+  
+  <!-- Logo -->
+  <circle cx="400" cy="300" r="30" fill="#ffffff" />
+  <path d="M380 290 L 400 310 L 420 280" stroke="#1976d2" stroke-width="5" fill="none" />
+  
+  <!-- Ajustador trasero -->
+  <path d="M250 500 C 250 480, 270 460, 290 460" stroke="#1565c0" stroke-width="3" />
+  <rect x="250" y="480" width="40" height="10" rx="5" fill="#1565c0" />
+  
+  <!-- Textura -->
+  <pattern id="fabric" patternUnits="userSpaceOnUse" width="10" height="10">
+    <rect width="10" height="10" fill="#2196f3" />
+    <path d="M0 0 L10 10 M10 0 L0 10" stroke="#1976d2" stroke-width="0.5" stroke-opacity="0.3" />
+  </pattern>
+  <path d="M400 200 C 300 200, 200 300, 200 400 C 200 430, 250 460, 300 460 L 500 460 C 550 460, 600 430, 600 400 C 600 300, 500 200, 400 200 Z" fill="url(#fabric)" />
+</svg>

@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "Camiseta Lavanda",
+    "price": 29.99,
+    "image": "/images/products/camiseta-lavanda.jpg",
+    "description": "Camiseta de algodón orgánico en tono lavanda, perfecta para cualquier ocasión.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 2,
+    "name": "Pantalón Beige",
+    "price": 49.99,
+    "image": "/images/products/pantalon-beige.jpg",
+    "description": "Pantalón de corte recto en tono beige, confeccionado con materiales sostenibles.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 3,
+    "name": "Vestido Floral",
+    "price": 59.99,
+    "image": "/images/products/vestido-floral.jpg",
+    "description": "Vestido con estampado floral, ideal para la temporada primavera-verano.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 4,
+    "name": "Chaqueta Denim",
+    "price": 79.99,
+    "image": "/images/products/chaqueta-denim.jpg",
+    "description": "Chaqueta de denim clásica, versátil y duradera para tu guardarropa diario.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 5,
+    "name": "Falda Plisada",
+    "price": 39.99,
+    "image": "/images/products/falda-plisada.jpg",
+    "description": "Falda plisada de longitud midi, elegante y cómoda para cualquier ocasión.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 6,
+    "name": "Blusa Blanca",
+    "price": 34.99,
+    "image": "/images/products/blusa-blanca.jpg",
+    "description": "Blusa blanca de algodón con detalles bordados, fresca y elegante.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 7,
+    "name": "Suéter Gris",
+    "price": 45.99,
+    "image": "/images/products/sueter-gris.jpg",
+    "description": "Suéter de punto en tono gris, cálido y confortable para días frescos.",
+    "categoria": "ropa"
+  },
+  {
+    "id": 8,
+    "name": "Zapatos Negros",
+    "price": 69.99,
+    "image": "/images/products/zapatos-negros.jpg",
+    "description": "Zapatos negros de piel sintética, elegantes y versátiles para cualquier look.",
+    "categoria": "calzado"
+  },
+  {
+    "id": 9,
+    "name": "Bolso Cruzado",
+    "price": 49.99,
+    "image": "/images/products/bolso-cruzado.jpg",
+    "description": "Bolso cruzado de diseño minimalista, práctico y elegante para el día a día.",
+    "categoria": "accesorios"
+  },
+  {
+    "id": 10,
+    "name": "Gorra Deportiva",
+    "price": 24.99,
+    "image": "/images/products/gorra-deportiva.jpg",
+    "description": "Gorra deportiva ajustable, perfecta para actividades al aire libre.",
+    "categoria": "accesorios"
+  },
+  {
+    "id": 11,
+    "name": "Bufanda Tejida",
+    "price": 29.99,
+    "image": "/images/products/bufanda-tejida.jpg",
+    "description": "Bufanda tejida a mano con lana suave, ideal para los días más fríos.",
+    "categoria": "accesorios"
+  },
+  {
+    "id": 12,
+    "name": "Reloj Minimalista",
+    "price": 89.99,
+    "image": "/images/products/reloj-minimalista.jpg",
+    "description": "Reloj de diseño minimalista con correa de cuero vegano, elegante y funcional.",
+    "categoria": "accesorios"
+  }
+]

@@ -1,0 +1,67 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del producto -->
+  <rect width="800" height="800" fill="#f5f5f5" />
+  
+  <!-- Silueta de la bufanda -->
+  <path d="M200 200 C 150 250, 150 350, 200 400 L 600 400 C 650 350, 650 250, 600 200 Z" fill="#ec407a" stroke="#d81b60" stroke-width="10" />
+  <path d="M200 400 C 150 450, 150 550, 200 600 L 600 600 C 650 550, 650 450, 600 400 Z" fill="#ec407a" stroke="#d81b60" stroke-width="10" />
+  
+  <!-- Flecos de la bufanda -->
+  <line x1="220" y1="200" x2="220" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="240" y1="200" x2="240" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="260" y1="200" x2="260" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="280" y1="200" x2="280" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="300" y1="200" x2="300" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="320" y1="200" x2="320" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="340" y1="200" x2="340" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="360" y1="200" x2="360" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="380" y1="200" x2="380" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="400" y1="200" x2="400" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="420" y1="200" x2="420" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="440" y1="200" x2="440" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="460" y1="200" x2="460" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="480" y1="200" x2="480" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="500" y1="200" x2="500" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="520" y1="200" x2="520" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="540" y1="200" x2="540" y2="170" stroke="#d81b60" stroke-width="5" />
+  <line x1="560" y1="200" x2="560" y2="160" stroke="#d81b60" stroke-width="5" />
+  <line x1="580" y1="200" x2="580" y2="170" stroke="#d81b60" stroke-width="5" />
+  
+  <line x1="220" y1="600" x2="220" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="240" y1="600" x2="240" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="260" y1="600" x2="260" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="280" y1="600" x2="280" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="300" y1="600" x2="300" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="320" y1="600" x2="320" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="340" y1="600" x2="340" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="360" y1="600" x2="360" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="380" y1="600" x2="380" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="400" y1="600" x2="400" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="420" y1="600" x2="420" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="440" y1="600" x2="440" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="460" y1="600" x2="460" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="480" y1="600" x2="480" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="500" y1="600" x2="500" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="520" y1="600" x2="520" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="540" y1="600" x2="540" y2="630" stroke="#d81b60" stroke-width="5" />
+  <line x1="560" y1="600" x2="560" y2="640" stroke="#d81b60" stroke-width="5" />
+  <line x1="580" y1="600" x2="580" y2="630" stroke="#d81b60" stroke-width="5" />
+  
+  <!-- Textura de punto -->
+  <!-- Patrón horizontal -->
+  <line x1="200" y1="250" x2="600" y2="250" stroke="#d81b60" stroke-width="3" />
+  <line x1="200" y1="300" x2="600" y2="300" stroke="#d81b60" stroke-width="3" />
+  <line x1="200" y1="350" x2="600" y2="350" stroke="#d81b60" stroke-width="3" />
+  
+  <line x1="200" y1="450" x2="600" y2="450" stroke="#d81b60" stroke-width="3" />
+  <line x1="200" y1="500" x2="600" y2="500" stroke="#d81b60" stroke-width="3" />
+  <line x1="200" y1="550" x2="600" y2="550" stroke="#d81b60" stroke-width="3" />
+  
+  <!-- Patrón de punto -->
+  <pattern id="knit" patternUnits="userSpaceOnUse" width="20" height="20">
+    <rect width="20" height="20" fill="#ec407a" />
+    <path d="M0 0 L20 20 M20 0 L0 20" stroke="#d81b60" stroke-width="1" />
+  </pattern>
+  <path d="M200 200 C 150 250, 150 350, 200 400 L 600 400 C 650 350, 650 250, 600 200 Z" fill="url(#knit)" />
+  <path d="M200 400 C 150 450, 150 550, 200 600 L 600 600 C 650 550, 650 450, 600 400 Z" fill="url(#knit)" />
+</svg>

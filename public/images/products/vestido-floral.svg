@@ -1,0 +1,39 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del producto -->
+  <rect width="800" height="800" fill="#e8f5e9" />
+  
+  <!-- Silueta del vestido -->
+  <path d="M400 100 L250 200 L200 350 L250 700 L550 700 L600 350 L550 200 Z" fill="#c8e6c9" stroke="#a5d6a7" stroke-width="10" />
+  
+  <!-- Cuello del vestido -->
+  <path d="M350 100 L400 150 L450 100" fill="none" stroke="#a5d6a7" stroke-width="8" />
+  
+  <!-- Patrón floral -->
+  <!-- Flor 1 -->
+  <circle cx="300" cy="300" r="20" fill="#f48fb1" />
+  <circle cx="300" cy="300" r="10" fill="#ffeb3b" />
+  <!-- Flor 2 -->
+  <circle cx="500" cy="350" r="20" fill="#f48fb1" />
+  <circle cx="500" cy="350" r="10" fill="#ffeb3b" />
+  <!-- Flor 3 -->
+  <circle cx="350" cy="450" r="20" fill="#f48fb1" />
+  <circle cx="350" cy="450" r="10" fill="#ffeb3b" />
+  <!-- Flor 4 -->
+  <circle cx="450" cy="550" r="20" fill="#f48fb1" />
+  <circle cx="450" cy="550" r="10" fill="#ffeb3b" />
+  <!-- Flor 5 -->
+  <circle cx="250" cy="500" r="20" fill="#f48fb1" />
+  <circle cx="250" cy="500" r="10" fill="#ffeb3b" />
+  <!-- Flor 6 -->
+  <circle cx="550" cy="500" r="20" fill="#f48fb1" />
+  <circle cx="550" cy="500" r="10" fill="#ffeb3b" />
+  
+  <!-- Tallos y hojas -->
+  <path d="M300 320 C 320 350, 280 380, 290 400" stroke="#81c784" stroke-width="3" fill="none" />
+  <path d="M500 370 C 520 400, 480 430, 490 450" stroke="#81c784" stroke-width="3" fill="none" />
+  <path d="M350 470 C 370 500, 330 530, 340 550" stroke="#81c784" stroke-width="3" fill="none" />
+  <path d="M450 570 C 470 600, 430 630, 440 650" stroke="#81c784" stroke-width="3" fill="none" />
+  
+  <!-- Cinturón -->
+  <rect x="200" y="400" width="400" height="20" fill="#a5d6a7" />
+</svg>

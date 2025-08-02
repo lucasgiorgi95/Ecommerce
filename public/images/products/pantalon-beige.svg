@@ -1,0 +1,19 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del producto -->
+  <rect width="800" height="800" fill="#f5f5dc" />
+  
+  <!-- Silueta del pantalón -->
+  <path d="M300 100 L250 200 L250 700 L350 700 L400 500 L450 700 L550 700 L550 200 L500 100 Z" fill="#e6e2af" stroke="#d6c785" stroke-width="10" />
+  
+  <!-- Cintura del pantalón -->
+  <rect x="250" y="100" width="300" height="50" fill="#d6c785" />
+  
+  <!-- Bolsillos -->
+  <rect x="280" y="200" width="80" height="60" rx="10" fill="#d6c785" />
+  <rect x="440" y="200" width="80" height="60" rx="10" fill="#d6c785" />
+  
+  <!-- Costuras -->
+  <line x1="400" y1="150" x2="400" y2="500" stroke="#c9bd62" stroke-width="5" />
+  <line x1="280" y1="350" x2="350" y2="350" stroke="#c9bd62" stroke-width="3" />
+  <line x1="450" y1="350" x2="520" y2="350" stroke="#c9bd62" stroke-width="3" />
+</svg>
