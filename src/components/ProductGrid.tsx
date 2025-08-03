@@ -18,7 +18,13 @@ export default function ProductGrid({ category }: ProductGridProps) {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getProducts();
+
+        if (!data) {
+          setError("No se pudieron cargar los productos");
+          return;
+        }
 
         // Filtrar por categoría si se proporciona
         const filteredProducts =
@@ -26,10 +32,11 @@ export default function ProductGrid({ category }: ProductGridProps) {
             ? data.filter((product) => product.category === category)
             : data;
 
-        setProducts(filteredProducts);
+        setProducts(filteredProducts || []);
       } catch (err) {
         setError("Error al cargar los productos");
         console.error("Error fetching products:", err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }

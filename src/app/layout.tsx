@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { CartProvider } from "@/hooks/useCart";
+import ClientCartProvider from "@/components/ClientCartProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,14 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <CartProvider>
+        <ClientCartProvider>
           <Navbar />
           <main className="flex-grow">
             {children}
           </main>
           <Footer />
           <WhatsAppButton />
-        </CartProvider>
+        </ClientCartProvider>
       </body>
     </html>
   );
