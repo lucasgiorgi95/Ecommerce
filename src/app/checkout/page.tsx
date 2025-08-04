@@ -1,14 +1,19 @@
 'use client';
 
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { withAuth, useTokenRefresh } from '@/lib/authMiddleware';
 
-export default function CheckoutPage() {
+function CheckoutPage() {
   const { cart, getTotalPrice, clearCart } = useCart();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  
+  // Use token refresh hook to handle token expiration
+  useTokenRefresh();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -278,3 +283,6 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+// Export the component wrapped with authentication middleware
+export default withAuth(CheckoutPage, true);

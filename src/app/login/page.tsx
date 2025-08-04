@@ -1,15 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginForm() {
+  const { login, isAuthenticated, user } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [error, setError] = useState('');
+
+  // Redirigir si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push(redirectTo);
+      }
+    }
+  }, [isAuthenticated, user, router, redirectTo]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -19,25 +37,39 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoggingIn(true);
     
-    // Simulamos el inicio de sesión
-    setTimeout(() => {
-      setIsLoggingIn(false);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
       
-      // Para propósitos de demostración, simulamos un error si el email no contiene '@'
-      if (!formData.email.includes('@')) {
-        setError('Por favor, introduce un email válido.');
-        return;
+      if (response.ok && data.success) {
+        // Actualizar el contexto de autenticación
+        const success = await login(formData.email, formData.password);
+        // La redirección se maneja ahora en el useEffect según el rol
+      } else {
+        // Mostrar error específico de la API
+        setError(data.error || 'Email o contraseña incorrectos.');
       }
-      
-      // Simulamos un inicio de sesión exitoso
-      alert('Inicio de sesión exitoso!');
-      // En una aplicación real, aquí redirigirías al usuario o actualizarías el estado global
-    }, 1500);
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Error de conexión. Intenta de nuevo.');
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
   return (
@@ -74,6 +106,7 @@ export default function LoginPage() {
               value={formData.password}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#b8a089] focus:border-transparent"
+              autoComplete="current-password"
               required
             />
           </div>
@@ -109,12 +142,29 @@ export default function LoginPage() {
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-gray-600">
             ¿No tienes una cuenta?{' '}
-            <Link href="#" className="text-[#b8a089] hover:text-[#a38b73] font-medium">
+            <Link 
+              href={`/register${redirectTo !== '/' ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`}
+              className="text-[#b8a089] hover:text-[#a38b73] font-medium"
+            >
               Regístrate
             </Link>
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-sm">
+          <div className="text-center">Cargando...</div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

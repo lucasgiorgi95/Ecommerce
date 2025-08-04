@@ -4,7 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { CartProvider } from "@/hooks/useCart";
+import ClientCartProvider from "@/components/ClientCartProvider";
+import ClientAuthProvider from "@/components/ClientAuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,14 +32,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <CartProvider>
-          <Navbar />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-          <WhatsAppButton />
-        </CartProvider>
+        <ClientAuthProvider>
+          <ClientCartProvider>
+            {/* Ocultar Navbar en rutas /admin */}
+            {typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin') && <Navbar />}
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+            {/* Ocultar WhatsApp en rutas /admin */}
+            {typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin') && <WhatsAppButton />}
+          </ClientCartProvider>
+        </ClientAuthProvider>
       </body>
     </html>
   );

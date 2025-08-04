@@ -1,10 +1,7 @@
-import { getProducts } from '@/utils/products';
 import ProductGrid from '@/components/ProductGrid';
 import Link from 'next/link';
 
 export default function Home() {
-  const products = getProducts();
-
   return (
     <div className="container mx-auto px-4 py-8">
       <section className="mb-12">
@@ -41,7 +38,7 @@ export default function Home() {
           </Link>
         </div>
         
-        <ProductGrid products={products.slice(0, 8)} />
+        <ProductGrid />
       </section>
     </div>
   );
