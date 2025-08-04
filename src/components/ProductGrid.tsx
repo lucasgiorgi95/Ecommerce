@@ -1,49 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import { Product } from "@/types/product";
-import { getProducts } from "@/services/api";
+import { useRealtimeProducts } from "@/hooks/useRealtimeProducts";
 
 type ProductGridProps = {
   category?: string;
 };
 
 export default function ProductGrid({ category }: ProductGridProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getProducts();
-
-        if (!data) {
-          setError("No se pudieron cargar los productos");
-          return;
-        }
-
-        // Filtrar por categoría si se proporciona
-        const filteredProducts =
-          category && category !== "todos"
-            ? data.filter((product) => product.category === category)
-            : data;
-
-        setProducts(filteredProducts || []);
-      } catch (err) {
-        setError("Error al cargar los productos");
-        console.error("Error fetching products:", err);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [category]);
+  const { products, loading, error, refreshProducts, reconnectEvents } =
+    useRealtimeProducts(category);
 
   if (loading) {
     return (
@@ -58,7 +24,10 @@ export default function ProductGrid({ category }: ProductGridProps) {
       <div className="text-center py-8">
         <p className="text-red-500">{error}</p>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => {
+            refreshProducts();
+            reconnectEvents();
+          }}
           className="mt-4 px-4 py-2 bg-[#b8a089] text-white rounded-md hover:bg-[#a08a7a] transition-colors"
         >
           Reintentar
@@ -71,6 +40,10 @@ export default function ProductGrid({ category }: ProductGridProps) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">No se encontraron productos.</p>
+        <p className="text-sm text-gray-500 mt-2">
+          Los productos se actualizan automáticamente cuando se agregan desde el
+          admin.
+        </p>
       </div>
     );
   }

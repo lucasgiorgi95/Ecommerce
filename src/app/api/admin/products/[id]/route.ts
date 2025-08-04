@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { notifyProductChange } from '@/lib/productEvents';
 
 // GET - Obtener producto por ID
 export async function GET(
@@ -64,6 +65,9 @@ export async function PUT(
       images: JSON.parse(product.images || '[]')
     };
 
+    // Notificar cambio a través de SSE
+    notifyProductChange('update', id);
+
     return NextResponse.json(productWithImages);
   } catch (error) {
     console.error('Error updating product:', error);
@@ -85,6 +89,9 @@ export async function DELETE(
     await prisma.product.delete({
       where: { id }
     });
+
+    // Notificar cambio a través de SSE
+    notifyProductChange('delete', id);
 
     return NextResponse.json({ message: 'Producto eliminado exitosamente' });
   } catch (error) {

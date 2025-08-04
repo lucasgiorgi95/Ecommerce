@@ -31,18 +31,19 @@ export default function BulkProductUpload() {
       skipEmptyLines: true,
       complete: (results) => {
         try {
-          const products = results.data.map((row: any, index: number) => {
+          const products = results.data.map((row: unknown, index: number) => {
+            const typedRow = row as Record<string, string>;
             // Validar campos requeridos
-            if (!row.name || !row.description || !row.price || !row.category) {
+            if (!typedRow.name || !typedRow.description || !typedRow.price || !typedRow.category) {
               throw new Error(`Fila ${index + 1}: Faltan campos requeridos`);
             }
 
             return {
-              name: row.name.trim(),
-              description: row.description.trim(),
-              price: parseFloat(row.price),
-              category: row.category.trim(),
-              image: row.image?.trim() || 'https://via.placeholder.com/300x300?text=Sin+Imagen'
+              name: typedRow.name.trim(),
+              description: typedRow.description.trim(),
+              price: parseFloat(typedRow.price),
+              category: typedRow.category.trim(),
+              image: typedRow.image?.trim() || 'https://via.placeholder.com/300x300?text=Sin+Imagen'
             };
           });
 
@@ -149,7 +150,7 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
           <h3 className="text-sm font-medium text-blue-800 mb-2">Instrucciones:</h3>
           <ul className="text-sm text-blue-700 space-y-1 mb-3">
             <li>• El archivo CSV debe contener las columnas: name, description, price, category, image</li>
-            <li>• Las categorías válidas son: men's clothing, women's clothing, jewelery, electronics</li>
+            <li>• Las categorías válidas son: men&apos;s clothing, women&apos;s clothing, jewelery, electronics</li>
             <li>• El precio debe ser un número (ej: 29.99)</li>
             <li>• La imagen debe ser una URL válida (opcional)</li>
           </ul>

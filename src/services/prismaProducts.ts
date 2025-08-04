@@ -59,7 +59,15 @@ export const prismaProductsService = {
         throw new Error(error.error || 'Error al crear producto');
       }
 
-      return await response.json();
+      const result = await response.json();
+      
+      // Invalidar cache del frontend
+      if (typeof window !== 'undefined') {
+        const { cacheManager } = await import('@/lib/cache');
+        cacheManager.invalidatePattern('products');
+      }
+
+      return result;
     } catch (error) {
       console.error('Error creating product:', error);
       throw error;
@@ -81,6 +89,12 @@ export const prismaProductsService = {
         const error = await response.json();
         throw new Error(error.error || 'Error al actualizar estado');
       }
+
+      // Invalidar cache del frontend
+      if (typeof window !== 'undefined') {
+        const { cacheManager } = await import('@/lib/cache');
+        cacheManager.invalidatePattern('products');
+      }
     } catch (error) {
       console.error('Error updating product status:', error);
       throw error;
@@ -100,6 +114,12 @@ export const prismaProductsService = {
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Error al eliminar producto');
+      }
+
+      // Invalidar cache del frontend
+      if (typeof window !== 'undefined') {
+        const { cacheManager } = await import('@/lib/cache');
+        cacheManager.invalidatePattern('products');
       }
     } catch (error) {
       console.error('Error deleting product:', error);

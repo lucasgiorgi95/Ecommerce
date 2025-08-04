@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 async function main() {
   // Limpiar datos existentes
   await prisma.product.deleteMany()
+  await prisma.user.deleteMany()
 
   // Crear productos de ejemplo
   const products = [
@@ -56,7 +57,20 @@ async function main() {
     })
   }
 
-  console.log('✅ Base de datos inicializada con productos de ejemplo')
+  // Crear usuario admin por defecto
+  const bcrypt = require('bcryptjs');
+  const adminPassword = await bcrypt.hash('admin123', 10);
+  await prisma.user.create({
+    data: {
+      email: 'admin@admin.com',
+      name: 'Administrador',
+      passwordHash: adminPassword,
+      role: 'admin', // UserRole.admin si importas el enum
+      isActive: true,
+    }
+  });
+
+  console.log('✅ Base de datos inicializada con productos de ejemplo y usuario admin')
 }
 
 main()

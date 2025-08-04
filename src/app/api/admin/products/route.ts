@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { notifyProductChange } from '@/lib/productEvents';
 
 // GET - Obtener todos los productos
 export async function GET() {
@@ -56,6 +57,9 @@ export async function POST(request: NextRequest) {
       ...product,
       images: JSON.parse(product.images || '[]')
     };
+
+    // Notificar cambio a través de SSE
+    notifyProductChange('create', product.id);
 
     return NextResponse.json(productWithImages, { status: 201 });
   } catch (error) {

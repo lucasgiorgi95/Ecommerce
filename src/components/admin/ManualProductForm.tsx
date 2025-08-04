@@ -28,30 +28,60 @@ export default function ManualProductForm() {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  // Simulación de subida a Cloudinary/Imgur
-  const uploadImage = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      // Simular delay de subida
-      setTimeout(() => {
-        // Crear URL temporal para preview
-        const url = URL.createObjectURL(file);
-        resolve(url);
-      }, 1000);
+  // Upload local de imágenes
+  const uploadImageLocally = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
     });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Error al subir imagen');
+    }
+
+    const result = await response.json();
+    return result.url;
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true);
-    const uploadPromises = acceptedFiles.map(file => uploadImage(file));
     
     try {
+      const uploadPromises = acceptedFiles.map(file => uploadImageLocally(file));
       const urls = await Promise.all(uploadPromises);
+      
       setFormData(prev => ({
         ...prev,
         images: [...prev.images, ...urls]
       }));
+
+      // Mostrar notificación de éxito
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('showToast', {
+          detail: {
+            type: 'success',
+            title: 'Imágenes subidas',
+            message: `${urls.length} imagen(es) subida(s) exitosamente`
+          }
+        }));
+      }
     } catch (error) {
       console.error('Error uploading images:', error);
+      
+      // Mostrar notificación de error
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('showToast', {
+          detail: {
+            type: 'error',
+            title: 'Error al subir imágenes',
+            message: error instanceof Error ? error.message : 'Error desconocido'
+          }
+        }));
+      }
     } finally {
       setUploading(false);
     }
@@ -287,7 +317,7 @@ export default function ManualProductForm() {
         {/* Precio */}
         <div>
           <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
-            Precio (USD)
+            Precio
           </label>
           <input
             type="number"

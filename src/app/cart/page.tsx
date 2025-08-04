@@ -1,12 +1,14 @@
 'use client';
 
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import CartItem from '@/components/CartItem';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function CartPage() {
   const { cart, getTotalPrice, clearCart } = useCart();
+  const { isAuthenticated } = useAuth();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -68,12 +70,21 @@ export default function CartPage() {
               </div>
               
               <div className="space-y-3">
-                <Link 
-                  href="/checkout" 
-                  className="block w-full bg-[#b8a089] text-white text-center px-6 py-3 rounded-md font-medium hover:bg-[#a38b73] transition-colors"
-                >
-                  Finalizar compra
-                </Link>
+                {isAuthenticated ? (
+                  <Link 
+                    href="/checkout" 
+                    className="block w-full bg-[#b8a089] text-white text-center px-6 py-3 rounded-md font-medium hover:bg-[#a38b73] transition-colors"
+                  >
+                    Finalizar compra
+                  </Link>
+                ) : (
+                  <Link 
+                    href="/login?redirect=/checkout" 
+                    className="block w-full bg-[#b8a089] text-white text-center px-6 py-3 rounded-md font-medium hover:bg-[#a38b73] transition-colors"
+                  >
+                    Iniciar sesión para finalizar compra
+                  </Link>
+                )}
                 
                 <button 
                   onClick={clearCart}

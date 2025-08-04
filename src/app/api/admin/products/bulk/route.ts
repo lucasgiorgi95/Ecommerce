@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { notifyProductChange } from '@/lib/productEvents';
 
 // POST - Importación masiva de productos
 export async function POST(request: NextRequest) {
@@ -45,6 +46,11 @@ export async function POST(request: NextRequest) {
       ...product,
       images: JSON.parse(product.images || '[]')
     }));
+
+    // Notificar cambios masivos a través de SSE
+    createdProducts.forEach(product => {
+      notifyProductChange('create', product.id);
+    });
 
     return NextResponse.json({
       message: `${createdProducts.length} productos creados exitosamente`,

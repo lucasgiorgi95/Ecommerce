@@ -9,15 +9,24 @@
     "lint": "next lint",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "npx prisma migrate reset --force && npm run db:seed",
-    "test:sync": "tsx scripts/test-sync.ts"
+    "test:sync": "tsx scripts/test-sync.ts",
+    "cleanup:images": "tsx scripts/cleanup-images.ts",
+    "cleanup:users": "tsx scripts/cleanup-users.ts",
+    "setup:neon": "tsx scripts/setup-neon.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.15.5",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.4.5",
     "papaparse": "^5.5.3",
+    "pg": "^8.16.3",
     "prisma": "^6.13.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

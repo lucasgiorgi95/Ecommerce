@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,4 +22,23 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   @@map("products")
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  isActive     Boolean  @default(true)
+  role         UserRole @default(user)
+  createdAt    DateTime @default(now())
+  lastLoginAt  DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
 }

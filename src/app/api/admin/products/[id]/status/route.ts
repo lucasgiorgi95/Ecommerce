@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { notifyProductChange } from '@/lib/productEvents';
 
 // PATCH - Actualizar solo el estado del producto
 export async function PATCH(
@@ -29,6 +30,9 @@ export async function PATCH(
       ...product,
       images: JSON.parse(product.images || '[]')
     };
+
+    // Notificar cambio a través de SSE
+    notifyProductChange('update', id);
 
     return NextResponse.json(productWithImages);
   } catch (error) {
