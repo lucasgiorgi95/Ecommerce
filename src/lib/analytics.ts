@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Sistema de analytics para tracking de productos
-import { prisma } from './prisma';
+
 
 export interface ProductView {
   productId: string;
   timestamp: Date;
-  userAgent?: string;
-  ip?: string;
 }
 
 export interface ProductStats {
@@ -29,8 +27,6 @@ export async function initAnalytics() {
 // Registrar vista de producto
 export async function trackProductView(
   productId: string,
-  userAgent?: string,
-  ip?: string
 ): Promise<void> {
   try {
     // Por ahora usar localStorage en el cliente para tracking básico
@@ -88,7 +84,7 @@ export async function getMostViewedProducts(limit: number = 10): Promise<Product
 // Hook para usar analytics
 export function useProductAnalytics() {
   const trackView = (productId: string) => {
-    trackProductView(productId, navigator.userAgent);
+    trackProductView(productId);
   };
 
   const getMostViewed = async (limit?: number) => {

@@ -104,7 +104,7 @@ export function useProductEvents(onProductChange: () => void) {
         reconnectTimeoutRef.current = null;
       }
     };
-  }, [sseEnabled]);
+  }, [connect, sseEnabled]);
 
   return {
     reconnect: connect

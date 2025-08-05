@@ -12,7 +12,7 @@ export function notifyProductChange(type: 'create' | 'update' | 'delete', produc
   connections.forEach(controller => {
     try {
       controller.enqueue(`data: ${message}\n\n`);
-    } catch (error) {
+    } catch (e) {
       // Remover conexiones cerradas
       connections.delete(controller);
     }
