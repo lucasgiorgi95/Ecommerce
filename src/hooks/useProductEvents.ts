@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 type ProductEvent = {
   type: 'create' | 'update' | 'delete' | 'connected' | 'heartbeat';
@@ -17,7 +17,7 @@ export function useProductEvents(onProductChange: () => void) {
   // Permitir deshabilitar SSE via variable de entorno
   const sseEnabled = process.env.NEXT_PUBLIC_SSE_ENABLED !== 'false';
 
-  const connect = () => {
+  const connect = useCallback(() => {
     if (!sseEnabled) {
       if (process.env.NODE_ENV === 'development') {
         console.log('SSE disabled via environment variable');
@@ -56,7 +56,7 @@ export function useProductEvents(onProductChange: () => void) {
         }
       };
 
-      eventSource.onerror = (error) => {
+      eventSource.onerror = () => {
         // Solo loggear en desarrollo para evitar spam en producción
         if (process.env.NODE_ENV === 'development') {
           console.warn('SSE connection error, attempting to reconnect...');
@@ -87,7 +87,7 @@ export function useProductEvents(onProductChange: () => void) {
         console.error('Error creating EventSource:', error);
       }
     }
-  };
+  }, [onProductChange, sseEnabled]);
 
   useEffect(() => {
     if (sseEnabled) {

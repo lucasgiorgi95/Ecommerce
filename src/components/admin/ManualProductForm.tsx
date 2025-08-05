@@ -30,7 +30,6 @@ export default function ManualProductForm() {
   });
 
   const [uploading, setUploading] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
   const [products, setProducts] = useState<PrismaProduct[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -76,9 +75,10 @@ export default function ManualProductForm() {
             detail: {
               type: "success",
               title: "Imágenes subidas",
-              message: urls.length === 1 
-                ? "1 imagen subida exitosamente" 
-                : `${urls.length} imágenes subidas exitosamente`,
+              message:
+                urls.length === 1
+                  ? "1 imagen subida exitosamente"
+                  : `${urls.length} imágenes subidas exitosamente`,
             },
           })
         );
