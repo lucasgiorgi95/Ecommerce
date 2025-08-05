@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 function LoginForm() {
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, isAuthenticated, user, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -17,17 +17,19 @@ function LoginForm() {
   });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [error, setError] = useState('');
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   // Redirigir si ya está autenticado
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (!isLoading && isAuthenticated && user && !hasRedirected) {
+      setHasRedirected(true);
       if (user.role === 'admin') {
         router.push('/admin');
       } else {
         router.push(redirectTo);
       }
     }
-  }, [isAuthenticated, user, router, redirectTo]);
+  }, [isAuthenticated, user, isLoading, router, redirectTo, hasRedirected]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -71,6 +73,25 @@ function LoginForm() {
       setIsLoggingIn(false);
     }
   };
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-sm">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#b8a089] mx-auto"></div>
+            <p className="mt-4 text-gray-600">Verificando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No renderizar si ya está autenticado (evita flash)
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">

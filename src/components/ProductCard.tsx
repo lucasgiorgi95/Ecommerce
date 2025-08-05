@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import SafeImage from '@/components/SafeImage';
 import { Product } from '@/types/product';
 
 type ProductCardProps = {
@@ -13,13 +13,14 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="h-full font-sans">
       <Link href={`/productos/${product.id}`} className="block h-full  ">
         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-          <div className="relative h-48 bg-gray-100">
-            <Image
+          <div className="relative h-48 bg-gray-100 p-4">
+            <SafeImage
               src={product.image}
               alt={product.title}
-              fill
-              className="object-contain p-4"
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              width={200}
+              height={160}
+              className="w-full h-full object-contain"
+              fallbackText={product.title}
               priority={false}
             />
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { useCart, CartItem as CartItemType } from '@/hooks/useCart';
 
 type CartItemProps = {
@@ -21,13 +21,14 @@ export default function CartItem({ item }: CartItemProps) {
 
   return (
     <div className="flex items-center py-4 border-b border-gray-200 last:border-b-0">
-      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md">
-        <Image
+      <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md">
+        <SafeImage
           src={product.image}
           alt={product.name}
-          fill
-          sizes="80px"
-          className="object-cover"
+          width={80}
+          height={80}
+          className="w-full h-full object-cover"
+          fallbackText="Producto"
         />
       </div>
 

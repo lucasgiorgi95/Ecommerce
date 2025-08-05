@@ -2,18 +2,19 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
-type CSVProduct = {
+type ExcelProduct = {
   name: string;
   description: string;
   price: number;
   category: string;
+  stock: number;
   image: string;
 };
 
 export default function BulkProductUpload() {
-  const [csvData, setCsvData] = useState<CSVProduct[]>([]);
+  const [excelData, setExcelData] = useState<ExcelProduct[]>([]);
   const [fileName, setFileName] = useState<string>('');
   const [parsing, setParsing] = useState(false);
   const [error, setError] = useState<string>('');
@@ -26,53 +27,90 @@ export default function BulkProductUpload() {
     setParsing(true);
     setError('');
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        try {
-          const products = results.data.map((row: unknown, index: number) => {
-            const typedRow = row as Record<string, string>;
-            // Validar campos requeridos
-            if (!typedRow.name || !typedRow.description || !typedRow.price || !typedRow.category) {
-              throw new Error(`Fila ${index + 1}: Faltan campos requeridos`);
-            }
-
-            return {
-              name: typedRow.name.trim(),
-              description: typedRow.description.trim(),
-              price: parseFloat(typedRow.price),
-              category: typedRow.category.trim(),
-              image: typedRow.image?.trim() || 'https://via.placeholder.com/300x300?text=Sin+Imagen'
-            };
-          });
-
-          setCsvData(products);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Error al procesar el archivo');
-          setCsvData([]);
-        } finally {
-          setParsing(false);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Obtener la primera hoja
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Convertir a JSON
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        if (jsonData.length < 2) {
+          throw new Error('El archivo debe tener al menos una fila de encabezados y una fila de datos');
         }
-      },
-      error: (error) => {
-        setError(`Error al leer el archivo: ${error.message}`);
+        
+        // Obtener encabezados (primera fila)
+        const headers = jsonData[0] as string[];
+        const requiredHeaders = ['name', 'description', 'price', 'category'];
+        
+        // Verificar que existan los encabezados requeridos
+        const missingHeaders = requiredHeaders.filter(header => 
+          !headers.some(h => h?.toLowerCase().trim() === header.toLowerCase())
+        );
+        
+        if (missingHeaders.length > 0) {
+          throw new Error(`Faltan las siguientes columnas: ${missingHeaders.join(', ')}`);
+        }
+        
+        // Procesar datos (desde la segunda fila)
+        const products = (jsonData.slice(1) as any[][]).map((row, index) => {
+          const product: any = {};
+          
+          headers.forEach((header, colIndex) => {
+            if (header) {
+              const key = header.toLowerCase().trim();
+              product[key] = row[colIndex];
+            }
+          });
+          
+          // Validar campos requeridos
+          if (!product.name || !product.description || !product.price || !product.category) {
+            throw new Error(`Fila ${index + 2}: Faltan campos requeridos (name, description, price, category)`);
+          }
+          
+          return {
+            name: String(product.name).trim(),
+            description: String(product.description).trim(),
+            price: parseFloat(product.price) || 0,
+            category: String(product.category).trim(),
+            stock: parseInt(product.stock) || 0,
+            image: product.image ? String(product.image).trim() : 'https://placehold.co/300x300/e5e7eb/6b7280?text=Sin+Imagen'
+          };
+        });
+
+        setExcelData(products);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al procesar el archivo');
+        setExcelData([]);
+      } finally {
         setParsing(false);
       }
-    });
+    };
+    
+    reader.onerror = () => {
+      setError('Error al leer el archivo');
+      setParsing(false);
+    };
+    
+    reader.readAsArrayBuffer(file);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'text/csv': ['.csv'],
-      'application/vnd.ms-excel': ['.csv']
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      'application/vnd.ms-excel': ['.xls']
     },
     multiple: false
   });
 
   const handleImport = async () => {
-    if (csvData.length === 0) return;
+    if (excelData.length === 0) return;
 
     try {
       setParsing(true);
@@ -80,13 +118,14 @@ export default function BulkProductUpload() {
       // Importar el servicio
       const { prismaProductsService } = await import('@/services/prismaProducts');
       
-      // Convertir datos CSV al formato esperado
-      const productsToImport = csvData.map(product => ({
+      // Convertir datos Excel al formato esperado
+      const productsToImport = excelData.map(product => ({
         name: product.name,
         description: product.description,
         price: product.price,
         category: product.category,
-        images: product.image ? [product.image] : ['https://via.placeholder.com/300x300?text=Sin+Imagen'],
+        stock: product.stock,
+        images: product.image ? [product.image] : ['https://placehold.co/300x300/e5e7eb/6b7280?text=Sin+Imagen'],
         status: 'published' as const
       }));
 
@@ -98,13 +137,13 @@ export default function BulkProductUpload() {
           detail: {
             type: 'success',
             title: 'Importación exitosa',
-            message: `${csvData.length} productos importados correctamente`
+            message: `${excelData.length} productos importados correctamente`
           }
         }));
       }
       
       // Reset
-      setCsvData([]);
+      setExcelData([]);
       setFileName('');
       
     } catch (error) {
@@ -126,39 +165,79 @@ export default function BulkProductUpload() {
   };
 
   const downloadTemplate = () => {
-    const template = `name,description,price,category,image
-Camiseta Básica,Camiseta de algodón 100% en varios colores,29.99,men's clothing,https://via.placeholder.com/300x300?text=Camiseta
-Pantalón Jeans,Pantalón de mezclilla clásico con corte recto,59.99,men's clothing,https://via.placeholder.com/300x300?text=Pantalon
-Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https://via.placeholder.com/300x300?text=Collar`;
+    // Crear datos de ejemplo
+    const templateData = [
+      {
+        'name': 'Camiseta Básica',
+        'description': 'Camiseta de algodón 100% en varios colores',
+        'price': 29.99,
+        'category': "men's clothing",
+        'stock': 50,
+        'image': 'https://placehold.co/300x300/e5e7eb/6b7280?text=Camiseta'
+      },
+      {
+        'name': 'Pantalón Jeans',
+        'description': 'Pantalón de mezclilla clásico con corte recto',
+        'price': 59.99,
+        'category': "men's clothing",
+        'stock': 30,
+        'image': 'https://placehold.co/300x300/e5e7eb/6b7280?text=Pantalon'
+      },
+      {
+        'name': 'Collar de Plata',
+        'description': 'Collar elegante de plata 925 con colgante',
+        'price': 89.99,
+        'category': 'jewelery',
+        'stock': 15,
+        'image': 'https://placehold.co/300x300/e5e7eb/6b7280?text=Collar'
+      }
+    ];
 
-    const blob = new Blob([template], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'plantilla_productos.csv';
-    a.click();
-    window.URL.revokeObjectURL(url);
+    // Crear workbook y worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    
+    // Configurar ancho de columnas
+    const colWidths = [
+      { wch: 20 }, // name
+      { wch: 50 }, // description
+      { wch: 10 }, // price
+      { wch: 15 }, // category
+      { wch: 8 },  // stock
+      { wch: 60 }  // image
+    ];
+    ws['!cols'] = colWidths;
+    
+    // Agregar worksheet al workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Plantilla');
+    
+    // Descargar
+    XLSX.writeFile(wb, 'plantilla_productos.xlsx');
   };
 
   return (
     <div className="max-w-4xl">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">Carga Masiva por CSV</h2>
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">Carga Masiva por Excel</h2>
       
       <div className="space-y-6">
         {/* Instrucciones y plantilla */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="text-sm font-medium text-blue-800 mb-2">Instrucciones:</h3>
           <ul className="text-sm text-blue-700 space-y-1 mb-3">
-            <li>• El archivo CSV debe contener las columnas: name, description, price, category, image</li>
+            <li>• El archivo Excel debe contener las columnas: name, description, price, category, stock, image</li>
             <li>• Las categorías válidas son: men&apos;s clothing, women&apos;s clothing, jewelery, electronics</li>
             <li>• El precio debe ser un número (ej: 29.99)</li>
+            <li>• El stock debe ser un número entero (ej: 50)</li>
             <li>• La imagen debe ser una URL válida (opcional)</li>
           </ul>
           <button
             onClick={downloadTemplate}
-            className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
+            className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors flex items-center"
           >
-            Descargar plantilla de ejemplo
+            <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Descargar plantilla Excel
           </button>
         </div>
 
@@ -187,10 +266,10 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
               />
             </svg>
             <div>
-              <span className="font-medium text-[#b8a089] text-lg">Haz clic para subir tu archivo CSV</span>
+              <span className="font-medium text-[#b8a089] text-lg">Haz clic para subir tu archivo Excel</span>
               <p className="text-gray-600">o arrastra el archivo aquí</p>
             </div>
-            <p className="text-sm text-gray-500">Solo archivos .csv</p>
+            <p className="text-sm text-gray-500">Solo archivos .xlsx o .xls</p>
           </div>
         </div>
 
@@ -221,11 +300,11 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
         )}
 
         {/* Preview de productos */}
-        {csvData.length > 0 && (
+        {excelData.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
               <h3 className="text-lg font-medium text-gray-800">
-                Preview: {csvData.length} productos encontrados en {fileName}
+                Preview: {excelData.length} productos encontrados en {fileName}
               </h3>
             </div>
             
@@ -243,12 +322,15 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
                       Precio
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Stock
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Categoría
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {csvData.slice(0, 5).map((product, index) => (
+                  {excelData.slice(0, 5).map((product, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{product.name}</div>
@@ -258,6 +340,9 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">${product.price.toFixed(2)}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{product.stock} unidades</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#f0e6dc] text-[#b8a089]">
@@ -270,9 +355,9 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
               </table>
             </div>
             
-            {csvData.length > 5 && (
+            {excelData.length > 5 && (
               <div className="px-6 py-3 bg-gray-50 text-sm text-gray-500 text-center">
-                ... y {csvData.length - 5} productos más
+                ... y {excelData.length - 5} productos más
               </div>
             )}
             
@@ -281,7 +366,7 @@ Collar de Plata,Collar elegante de plata 925 con colgante,89.99,jewelery,https:/
                 onClick={handleImport}
                 className="w-full bg-[#b8a089] text-white py-3 px-4 rounded-md hover:bg-[#a08a7a] focus:outline-none focus:ring-2 focus:ring-[#b8a089] focus:ring-offset-2 transition-colors"
               >
-                Importar {csvData.length} productos
+                Importar {excelData.length} productos
               </button>
             </div>
           </div>

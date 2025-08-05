@@ -14,7 +14,7 @@ async function testSync() {
       description: 'Este producto fue creado para probar la sincronización',
       price: 99.99,
       category: 'electronics',
-      images: JSON.stringify(['https://via.placeholder.com/300x300?text=Prueba']),
+      images: JSON.stringify(['https://placehold.co/300x300/e5e7eb/6b7280?text=Prueba']),
       status: 'published'
     }
   })

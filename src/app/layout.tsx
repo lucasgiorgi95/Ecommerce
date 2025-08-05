@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import ConditionalNavigation from "@/components/ConditionalNavigation";
+import ConditionalFooter from "@/components/ConditionalFooter";
 import ClientCartProvider from "@/components/ClientCartProvider";
 import ClientAuthProvider from "@/components/ClientAuthProvider";
 
@@ -34,14 +33,11 @@ export default function RootLayout({
       >
         <ClientAuthProvider>
           <ClientCartProvider>
-            {/* Ocultar Navbar en rutas /admin */}
-            {typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin') && <Navbar />}
+            <ConditionalNavigation />
             <main className="flex-grow">
               {children}
             </main>
-            <Footer />
-            {/* Ocultar WhatsApp en rutas /admin */}
-            {typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin') && <WhatsAppButton />}
+            <ConditionalFooter />
           </ClientCartProvider>
         </ClientAuthProvider>
       </body>

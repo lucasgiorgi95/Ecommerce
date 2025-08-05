@@ -29,6 +29,16 @@ export interface UserResponse {
 export async function createUser(userData: CreateUserData): Promise<UserResponse> {
   const { email, name, password } = userData;
 
+  // Validar contraseña fuerte: mínimo 8 caracteres, letras y números
+  if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+    throw new Error('La contraseña debe tener al menos 8 caracteres, incluyendo letras y números.');
+  }
+
+  // Validar email de dominio permitido
+  if (!/^([\w.-]+)@(gmail|hotmail|outlook|yahoo)\.com$/i.test(email)) {
+    throw new Error('Solo se permiten correos de Gmail, Hotmail, Outlook o Yahoo.');
+  }
+
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({
     where: { email }

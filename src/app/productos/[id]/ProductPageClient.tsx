@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import SafeImage from '@/components/SafeImage';
 import AddToCartButton from '../../../components/AddToCartButton';
 import { Product } from '@/types/product';
 
@@ -58,13 +58,14 @@ export default function ProductPageClient({ product, relatedProducts, productId 
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="bg-[#f9f7f5] rounded-lg overflow-hidden max-w-md mx-auto md:mx-0">
-          <Image 
+        <div className="bg-[#f9f7f5] rounded-lg overflow-hidden max-w-md mx-auto md:mx-0 p-6">
+          <SafeImage 
             src={product.image} 
             alt={product.title}
             width={400}
             height={400}
-            className="w-full h-auto object-contain p-6"
+            className="w-full h-auto object-contain"
+            fallbackText={product.title}
             priority
           />
         </div>
@@ -93,13 +94,14 @@ export default function ProductPageClient({ product, relatedProducts, productId 
               <div key={relatedProduct.id} className="h-full font-sans">
                 <Link href={`/productos/${relatedProduct.id}`} className="block h-full">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                    <div className="relative h-48 bg-gray-100">
-                      <Image
+                    <div className="h-48 bg-gray-100 p-4">
+                      <SafeImage
                         src={relatedProduct.image}
                         alt={relatedProduct.title}
-                        fill
-                        className="object-contain p-4"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        width={200}
+                        height={160}
+                        className="w-full h-full object-contain"
+                        fallbackText={relatedProduct.title}
                       />
                     </div>
                     <div className="p-4 flex-grow flex flex-col bg-[#f0e6dc]">
