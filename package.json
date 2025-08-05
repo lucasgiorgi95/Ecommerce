@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
     "build:ignore-lint": "DISABLE_ESLINT_PLUGIN=true next build",
-    "postinstall": "prisma generate || echo 'Prisma generate failed, will retry during build'",
+    "postinstall": "echo 'Skipping postinstall, will generate during build'",
     "vercel-build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",

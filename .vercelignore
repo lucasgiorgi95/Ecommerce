@@ -1,5 +1,12 @@
 # Archivos que Vercel debe ignorar
-/scripts/
+/scripts/build.sh
+/scripts/clean-placeholder-urls.sql
+/scripts/cleanup-images.ts
+/scripts/cleanup-users.ts
+/scripts/fix-placeholder-images.ts
+/scripts/setup-neon.ts
+/scripts/test-sync.ts
+/scripts/vercel-build.sh
 /docs/
 *.md
 .env.local
