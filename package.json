@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
     "build:ignore-lint": "DISABLE_ESLINT_PLUGIN=true next build",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma db push && next build",
+    "postinstall": "prisma generate || echo 'Prisma generate failed, will retry during build'",
+    "vercel-build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx prisma/seed.ts",
@@ -17,9 +17,7 @@
     "cleanup:users": "tsx scripts/cleanup-users.ts",
     "setup:neon": "tsx scripts/setup-neon.ts"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
+
   "dependencies": {
     "@prisma/client": "^6.13.0",
     "@types/bcryptjs": "^2.4.6",
