@@ -1,0 +1,7 @@
+# Archivos que Vercel debe ignorar
+/scripts/
+/docs/
+*.md
+.env.local
+.env.development
+.env.test
