@@ -128,7 +128,7 @@ export default function AdminDashboard() {
                       <div className="h-10 w-10 flex-shrink-0">
                         <img
                           className="h-10 w-10 rounded-lg object-cover"
-                          src={product.images[0] || 'https://via.placeholder.com/40x40?text=Sin+Imagen'}
+                          src={product.images[0] || 'https://placehold.co/40x40/e5e7eb/6b7280?text=Sin+Imagen'}
                           alt={product.name}
                         />
                       </div>

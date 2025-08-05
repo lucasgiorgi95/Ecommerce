@@ -14,7 +14,16 @@ export function useProductEvents(onProductChange: () => void) {
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
 
+  // Permitir deshabilitar SSE via variable de entorno
+  const sseEnabled = process.env.NEXT_PUBLIC_SSE_ENABLED !== 'false';
+
   const connect = () => {
+    if (!sseEnabled) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('SSE disabled via environment variable');
+      }
+      return;
+    }
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
@@ -24,7 +33,9 @@ export function useProductEvents(onProductChange: () => void) {
       eventSourceRef.current = eventSource;
 
       eventSource.onopen = () => {
-        console.log('SSE connection opened');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('SSE connection opened');
+        }
         reconnectAttempts.current = 0;
       };
 
@@ -33,16 +44,24 @@ export function useProductEvents(onProductChange: () => void) {
           const data: ProductEvent = JSON.parse(event.data);
           
           if (data.type === 'create' || data.type === 'update' || data.type === 'delete') {
-            console.log('Product change detected:', data);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Product change detected:', data);
+            }
             onProductChange();
           }
         } catch (error) {
-          console.error('Error parsing SSE message:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error parsing SSE message:', error);
+          }
         }
       };
 
       eventSource.onerror = (error) => {
-        console.error('SSE error:', error);
+        // Solo loggear en desarrollo para evitar spam en producción
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('SSE connection error, attempting to reconnect...');
+        }
+        
         eventSource.close();
         
         // Intentar reconectar con backoff exponencial
@@ -50,22 +69,30 @@ export function useProductEvents(onProductChange: () => void) {
           const delay = Math.pow(2, reconnectAttempts.current) * 1000; // 1s, 2s, 4s, 8s, 16s
           reconnectAttempts.current++;
           
-          console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts.current})`);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts.current})`);
+          }
           
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, delay);
         } else {
-          console.error('Max reconnection attempts reached');
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('Max SSE reconnection attempts reached, falling back to polling');
+          }
         }
       };
     } catch (error) {
-      console.error('Error creating EventSource:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error creating EventSource:', error);
+      }
     }
   };
 
   useEffect(() => {
-    connect();
+    if (sseEnabled) {
+      connect();
+    }
 
     return () => {
       if (eventSourceRef.current) {
@@ -77,7 +104,7 @@ export function useProductEvents(onProductChange: () => void) {
         reconnectTimeoutRef.current = null;
       }
     };
-  }, []);
+  }, [sseEnabled]);
 
   return {
     reconnect: connect

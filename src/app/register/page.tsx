@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 function RegisterForm() {
-  const { register, isAuthenticated } = useAuth();
+  const { register, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -21,13 +21,15 @@ function RegisterForm() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [redirectCountdown, setRedirectCountdown] = useState(0);
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   // Redirigir si ya está autenticado
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated && !hasRedirected) {
+      setHasRedirected(true);
       router.push(redirectTo);
     }
-  }, [isAuthenticated, router, redirectTo]);
+  }, [isAuthenticated, isLoading, router, redirectTo, hasRedirected]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,6 +49,20 @@ function RegisterForm() {
     // Validaciones básicas
     if (formData.password !== formData.confirmPassword) {
       setError('Las contraseñas no coinciden.');
+      setIsRegistering(false);
+      return;
+    }
+
+    // Validar contraseña fuerte: mínimo 8 caracteres, letras y números
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(formData.password)) {
+      setError('La contraseña debe tener al menos 8 caracteres, incluyendo letras y números.');
+      setIsRegistering(false);
+      return;
+    }
+
+    // Validar email de dominio permitido
+    if (!/^([\w.-]+)@(gmail|hotmail|outlook|yahoo)\.com$/i.test(formData.email)) {
+      setError('Solo se permiten correos de Gmail, Hotmail, Outlook o Yahoo.');
       setIsRegistering(false);
       return;
     }
@@ -130,6 +146,25 @@ function RegisterForm() {
       setIsRegistering(false);
     }
   };
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-sm">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#b8a089] mx-auto"></div>
+            <p className="mt-4 text-gray-600">Verificando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No renderizar si ya está autenticado (evita flash)
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">

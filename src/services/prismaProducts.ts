@@ -10,6 +10,7 @@ export type PrismaProduct = {
   category: string | null;
   images: string[];
   status: ProductStatus;
+  stock: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -44,6 +45,7 @@ export const prismaProductsService = {
     category?: string;
     images?: string[];
     status?: ProductStatus;
+    stock?: number;
   }): Promise<PrismaProduct> {
     try {
       const response = await fetch('/api/admin/products', {
@@ -135,6 +137,7 @@ export const prismaProductsService = {
     category: string;
     images: string[];
     status: ProductStatus;
+    stock: number;
   }>): Promise<PrismaProduct> {
     try {
       const response = await fetch(`/api/admin/products/${id}`, {
@@ -165,6 +168,7 @@ export const prismaProductsService = {
     category?: string;
     images?: string[];
     status?: ProductStatus;
+    stock?: number;
   }>): Promise<PrismaProduct[]> {
     try {
       const response = await fetch('/api/admin/products/bulk', {

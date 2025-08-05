@@ -31,7 +31,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, price, description, images, status, category } = body;
+    const { name, price, description, images, status, category, stock } = body;
 
     // Validaciones básicas
     if (!name || !price) {
@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
         description: description || null,
         images: JSON.stringify(images || []),
         status: status || 'published',
-        category: category || null
+        category: category || null,
+        stock: stock ? parseInt(stock) : 0
       }
     });
 
