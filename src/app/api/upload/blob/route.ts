@@ -8,55 +8,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
+      onBeforeGenerateToken: async (pathname) => {
         // Validaciones de seguridad
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-        const maxSize = 10 * 1024 * 1024; // 10MB
-
-        // Validar tipo de archivo
-        if (clientPayload && typeof clientPayload === 'object' && 'type' in clientPayload) {
-          const fileType = clientPayload.type as string;
-          if (!allowedTypes.includes(fileType)) {
-            throw new Error('Tipo de archivo no permitido. Solo se permiten: JPG, PNG, WebP');
-          }
+        if (!pathname.startsWith('products/')) {
+          throw new Error('Invalid pathname');
         }
-
-        // Validar tamaño
-        if (clientPayload && typeof clientPayload === 'object' && 'size' in clientPayload) {
-          const fileSize = clientPayload.size as number;
-          if (fileSize > maxSize) {
-            throw new Error('Archivo muy grande. Máximo 10MB permitido');
-          }
-        }
-
-        // Generar nombre único
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(2, 15);
-        const extension = pathname.split('.').pop() || 'jpg';
+        
+        // Aquí podrías agregar validaciones adicionales como autenticación
+        // Por ejemplo, verificar que el usuario sea admin
         
         return {
-          allowedContentTypes: allowedTypes,
-          tokenPayload: JSON.stringify({
-            pathname: `products/${timestamp}-${randomString}.${extension}`,
-            timestamp,
-          }),
+          allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
+          maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        console.log('✅ Upload completed:', blob.url);
-        
-        // Aquí podrías agregar lógica adicional como:
-        // - Guardar referencia en base de datos
-        // - Procesar imagen (resize, optimización)
-        // - Notificar a otros servicios
+        console.log('Blob uploaded successfully:', blob.url);
       },
     });
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
-    console.error('Error in blob upload:', error);
+    console.error('Error in blob upload handler:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Error al subir imagen' },
+      { error: (error as Error).message },
       { status: 400 }
     );
   }

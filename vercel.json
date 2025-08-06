@@ -1,8 +1,15 @@
 {
-  "buildCommand": "node scripts/vercel-prisma-generate.js && next build",
   "functions": {
-    "app/api/**/*.ts": {
+    "src/app/api/**/*.ts": {
       "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
     }
   }
 }

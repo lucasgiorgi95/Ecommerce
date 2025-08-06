@@ -29,39 +29,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Detectar si estamos en Vercel (producción) o desarrollo local
-    const isProduction = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+    // Verificar si estamos en producción con Vercel
+    const isVercelProduction = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
     
-    if (isProduction) {
-      // Usar Vercel Blob en producción
+    if (isVercelProduction) {
+      // Intentar usar Vercel Blob Storage en producción
       try {
-        const { put } = await import('@vercel/blob');
+        const { VercelBlobService } = await import('@/lib/vercel-blob');
+        const imageUrl = await VercelBlobService.uploadImage(file);
         
-        // Generar nombre único
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(2, 15);
-        const extension = file.name.split('.').pop() || 'jpg';
-        const fileName = `products/${timestamp}-${randomString}.${extension}`;
-
-        // Subir a Vercel Blob Storage
-        const blob = await put(fileName, file, {
-          access: 'public',
-        });
-
+        console.log('✅ Imagen subida exitosamente a Vercel Blob:', imageUrl);
+        
         return NextResponse.json({
-          url: blob.url,
-          filename: fileName,
+          url: imageUrl,
+          filename: file.name,
           size: file.size,
           type: file.type
         });
       } catch (blobError) {
-        console.error('Error with Vercel Blob, falling back to placeholder:', blobError);
-        // Fallback a placeholder si Vercel Blob falla
+        console.error('❌ Error with Vercel Blob Storage:', blobError);
+        
+        // En producción, si Vercel Blob falla, usar placeholder
+        const placeholderUrl = `/api/placeholder?width=300&height=300&text=${encodeURIComponent(file.name.split('.')[0] || 'Imagen')}`;
+        
         return NextResponse.json({
-          url: `/api/placeholder?width=300&height=300&text=${encodeURIComponent('Imagen subida')}`,
+          url: placeholderUrl,
           filename: 'placeholder.svg',
           size: file.size,
-          type: 'image/svg+xml'
+          type: 'image/svg+xml',
+          warning: 'Imagen guardada como placeholder debido a error en Vercel Blob'
         });
       }
     } else {
@@ -70,6 +66,8 @@ export async function POST(request: NextRequest) {
         const { uploadImageLocally } = await import('@/lib/fileUpload');
         const result = await uploadImageLocally(file);
         
+        console.log('✅ Imagen subida localmente:', result.url);
+        
         return NextResponse.json({
           url: result.url,
           filename: result.filename,
@@ -77,13 +75,17 @@ export async function POST(request: NextRequest) {
           type: result.type
         });
       } catch (localError) {
-        console.error('Error with local upload, using placeholder:', localError);
-        // Fallback a placeholder
+        console.error('❌ Error with local upload:', localError);
+        
+        // Fallback a placeholder en desarrollo
+        const placeholderUrl = `/api/placeholder?width=300&height=300&text=${encodeURIComponent(file.name.split('.')[0] || 'Imagen')}`;
+        
         return NextResponse.json({
-          url: `/api/placeholder?width=300&height=300&text=${encodeURIComponent('Imagen subida')}`,
+          url: placeholderUrl,
           filename: 'placeholder.svg',
           size: file.size,
-          type: 'image/svg+xml'
+          type: 'image/svg+xml',
+          warning: 'Imagen guardada como placeholder debido a error en subida local'
         });
       }
     }

@@ -26,15 +26,32 @@ export default function SafeImage({
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verificar si la URL es problemática (via.placeholder.com u otros servicios no confiables)
+  // Verificar si la URL es problemática (servicios externos no confiables)
   const isProblematicUrl = src && (
     src.includes('via.placeholder.com') || 
     src.includes('placeholder.com') ||
-    src.startsWith('https://via.placeholder')
+    src.includes('placehold.co') ||
+    src.startsWith('https://via.placeholder') ||
+    src.startsWith('https://placehold.co')
   );
 
   // Si no hay src, hubo error, o es una URL problemática, usar placeholder
   if (!src || imageError || isProblematicUrl) {
+    // Si ya es nuestro placeholder API, usarlo directamente
+    if (src && src.startsWith('/api/placeholder')) {
+      return (
+        <img
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+          style={{ objectFit: 'cover' }}
+        />
+      );
+    }
+    
+    // Usar placeholder generado localmente
     const placeholderSrc = getPlaceholderImageDataUrl(fallbackText, width, height);
     
     return (

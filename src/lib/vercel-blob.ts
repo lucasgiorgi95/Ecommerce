@@ -6,6 +6,11 @@ export class VercelBlobService {
    */
   static async uploadImage(file: File): Promise<string> {
     try {
+      // Verificar si estamos en un entorno que soporta Vercel Blob
+      if (!process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV === 'production') {
+        console.warn('BLOB_READ_WRITE_TOKEN not found, this should be automatically set by Vercel');
+      }
+
       // Generar nombre único para el archivo
       const timestamp = Date.now();
       const randomString = Math.random().toString(36).substring(2, 15);
@@ -15,9 +20,9 @@ export class VercelBlobService {
       // Subir archivo a Vercel Blob
       const blob = await put(fileName, file, {
         access: 'public',
-        handleUploadUrl: '/api/upload/blob',
       });
 
+      console.log('Image uploaded successfully to Vercel Blob:', blob.url);
       return blob.url;
     } catch (error) {
       console.error('Error uploading to Vercel Blob:', error);

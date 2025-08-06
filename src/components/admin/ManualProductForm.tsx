@@ -248,7 +248,7 @@ export default function ManualProductForm() {
         images:
           formData.images.length > 0
             ? formData.images
-            : ["https://placehold.co/300x300/e5e7eb/6b7280?text=Sin+Imagen"],
+            : [],
         status: "published" as const,
       };
 

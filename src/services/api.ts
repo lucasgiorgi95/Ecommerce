@@ -19,7 +19,7 @@ export async function getProductsServer(): Promise<Product[]> {
       price: product.price,
       description: product.description || '',
       category: product.category || '',
-      image: JSON.parse(product.images || '[]')[0] || 'https://placehold.co/300x300/e5e7eb/6b7280?text=Sin+Imagen',
+      image: JSON.parse(product.images || '[]')[0] || '/api/placeholder?width=300&height=300&text=Sin+Imagen',
       rating: {
         rate: 4.5,
         count: Math.floor(Math.random() * 100) + 10
