@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadImageLocally } from '@/lib/fileUpload';
+import { put } from '@vercel/blob';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,31 +14,41 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar tipo de archivo
-    if (!file.type.startsWith('image/')) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: 'El archivo debe ser una imagen' },
+        { error: 'Tipo de archivo no permitido. Solo se permiten: JPG, PNG, WebP' },
         { status: 400 }
       );
     }
 
-    // Validar tamaño (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validar tamaño (máximo 10MB)
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'El archivo es demasiado grande (máximo 5MB)' },
+        { error: 'El archivo es demasiado grande (máximo 10MB)' },
         { status: 400 }
       );
     }
 
-    const result = await uploadImageLocally(file);
+    // Generar nombre único
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const extension = file.name.split('.').pop() || 'jpg';
+    const fileName = `products/${timestamp}-${randomString}.${extension}`;
+
+    // Subir a Vercel Blob Storage
+    const blob = await put(fileName, file, {
+      access: 'public',
+    });
 
     return NextResponse.json({
-      url: result.url,
-      filename: result.filename,
-      size: result.size,
-      type: result.type
+      url: blob.url,
+      filename: fileName,
+      size: file.size,
+      type: file.type
     });
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error('Error uploading to Vercel Blob:', error);
     return NextResponse.json(
       { error: 'Error al subir imagen' },
       { status: 500 }
